@@ -67,7 +67,8 @@ public class Util {
 
 	public static boolean isPlayerInvisible(Player player) {
 		try {
-			return player.isInvisible();
+			// todo: 1.8 -> return player.isInvisible();
+			throw new NoSuchMethodError("Not implemented.");
 		} catch (NoSuchMethodError e) {
 			return player.hasPotionEffect(PotionEffectType.INVISIBILITY);
 		}

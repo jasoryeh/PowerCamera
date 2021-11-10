@@ -39,9 +39,9 @@ public class OnJoin implements Listener {
 		}
 
 		try {
-			if (e.getPlayer().isInvisible()) {
+			/* todo: 1.8 -> if (e.getPlayer().isInvisible()) {
 				e.getPlayer().setInvisible(false);
-			}
+			}*/
 		} catch (Exception ex) {
 			// Ignore
 			// This will be triggered on older versions

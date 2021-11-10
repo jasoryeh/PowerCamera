@@ -26,7 +26,7 @@ public class cmd_invisible extends PowerCameraCommand {
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("false")) {
 					boolean set_invisible = args[0].equalsIgnoreCase("true");
-					player.setInvisible(set_invisible);
+					// todo: 1.8 -> player.setInvisible(set_invisible);
 				} else {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "Usage: /" + commandLabel
 							+ " invisible <true/false>");
