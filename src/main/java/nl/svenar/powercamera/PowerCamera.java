@@ -98,7 +98,10 @@ public class PowerCamera extends JavaPlugin {
 		}
 
 		for (String camera_name : config_cameras.getCameras()) {
-			List<String> points = config_cameras.getPoints(camera_name);
+			/*
+			 * Assumes all non-labeled points are location steps, and edits the config as such.
+			 */
+			List<String> points = config_cameras.getRawPoints(camera_name);
 			List<String> new_points = new ArrayList<String>();
 			for (String point : points) {
 				if (!point.startsWith("location:") && !point.startsWith("command:")) {
@@ -110,11 +113,6 @@ public class PowerCamera extends JavaPlugin {
 				}
 				
 				new_points.add(point);
-//				if (point.contains(":")) {
-//					new_points.add(point);
-//				} else {
-//					new_points.add("location:" + point);
-//				}
 			}
 			config_cameras.getConfig().set("cameras." + camera_name + ".points", new_points);
 		}

@@ -2,8 +2,10 @@ package nl.svenar.powercamera;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import nl.svenar.powercamera.commands.PowerCameraPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,67 +43,64 @@ public class CameraHandler extends BukkitRunnable {
 	public CameraHandler generatePath() {
 		int max_points = (this.plugin.getConfigCameras().getDuration(this.camera_name) * 1000) / this.single_frame_duration_ms;
 
-		List<String> raw_camera_points = this.plugin.getConfigCameras().getPoints(this.camera_name);
-		List<String> raw_camera_move_points = getMovementPoints(raw_camera_points);
+		List<CameraStep> raw_camera_points = this.plugin.getConfigCameras().getPoints(this.camera_name);
+		List<LocationStep> raw_camera_move_points = getMovementPoints(raw_camera_points);
 
 		if (raw_camera_move_points.size() - 1 == 0) {
+			Location previewLocation = raw_camera_move_points.get(0).getPoint();
 			for (int j = 0; j < max_points - 1; j++) {
-				this.camera_path_points.add(Util.deserializeLocation(raw_camera_move_points.get(0).split(":", 2)[1]));
+				this.camera_path_points.add(previewLocation);
 			}
 		} else {
 			for (int i = 0; i < raw_camera_move_points.size() - 1; i++) {
-				String raw_point = raw_camera_move_points.get(i).split(":", 2)[1];
-				String raw_point_next = raw_camera_move_points.get(i + 1).split(":", 2)[1];
-				String easing = raw_camera_move_points.get(i + 1).split(":", 2)[0];
+				LocationStep raw_point = raw_camera_move_points.get(i);
+				LocationStep raw_point_next = raw_camera_move_points.get(i + 1);
 
-				Location point = Util.deserializeLocation(raw_point);
-				Location point_next = Util.deserializeLocation(raw_point_next);
-
-				this.camera_path_points.add(point);
+				this.camera_path_points.add(raw_point.getPoint());
 				for (int j = 0; j < max_points / (raw_camera_move_points.size() - 1) - 1; j++) {
-					if (easing.equalsIgnoreCase("linear")) {
-						this.camera_path_points.add(translateLinear(point, point_next, j, max_points / (raw_camera_move_points.size() - 1) - 1));
-					}
-					if (easing.equalsIgnoreCase("teleport")) {
-						this.camera_path_points.add(point_next);
+					switch (raw_point_next.getMovementType()) {
+						case LINEAR:
+							this.camera_path_points.add(
+									translateLinear(
+											raw_point.getPoint(),
+											raw_point_next.getPoint(),
+											j,
+											max_points / (raw_camera_move_points.size() - 1) - 1));
+							break;
+						case TELEPORT:
+							this.camera_path_points.add(raw_point_next.getPoint());
+							break;
+						default:
+							break;
 					}
 				}
 			}
 		}
 
 		int command_index = 0;
-		for (String raw_point : raw_camera_points) {
-			String type = raw_point.split(":", 3)[0];
-//			String easing = raw_point.split(":", 3)[1];
-			String data = raw_point.split(":", (type == "location" ? 3 : 2))[type == "location" ? 2 : 1];
-
-			if (type.equalsIgnoreCase("location")) {
+		for (CameraStep raw_point : raw_camera_points) {
+			if (raw_point instanceof LocationStep) {
 				command_index += 1;
 			}
 
-			if (type.equalsIgnoreCase("command")) {
+			if (raw_point instanceof CommandStep) {
 				int index = ((command_index) * max_points / (raw_camera_move_points.size()) - 1);
-				index = command_index == 0 ? 0 : index - 1;
-				index = index < 0 ? 0 : index;
-				if (!this.camera_path_commands.containsKey(index))
+				index = Math.max(command_index == 0 ? 0 : index - 1, 0);
+				if (!this.camera_path_commands.containsKey(index)) {
 					this.camera_path_commands.put(index, new ArrayList<String>());
-				this.camera_path_commands.get(index).add(data);
-//				this.camera_path_commands.put(index, raw_camera_points.get(0));
+				}
+				this.camera_path_commands.get(index).add(((CommandStep) raw_point).getCommand());
 			}
 		}
 
 		return this;
 	}
 
-	private List<String> getMovementPoints(List<String> raw_camera_points) {
-		List<String> output = new ArrayList<String>();
-		for (String raw_point : raw_camera_points) {
-			String[] point_data = raw_point.split(":", 2);
-			if (point_data[0].equalsIgnoreCase("location")) {
-				output.add(point_data[1]);
-			}
-		}
-		return output;
+	private List<LocationStep> getMovementPoints(List<CameraStep> raw_camera_points) {
+		return raw_camera_points.stream()
+				.filter(step -> step instanceof LocationStep)
+				.map(step -> (LocationStep) step)
+				.collect(Collectors.toList());
 	}
 
 	private Location translateLinear(Location point, Location point_next, int progress, int progress_max) {
@@ -210,7 +209,7 @@ public class CameraHandler extends BukkitRunnable {
 	}
 
 	public CameraHandler preview(Player player, int num, int preview_time) {
-		List<String> camera_points = plugin.getConfigCameras().getPoints(camera_name);
+		List<CameraStep> camera_points = plugin.getConfigCameras().getPoints(camera_name);
 
 		if (num < 0)
 			num = 0;
@@ -218,7 +217,8 @@ public class CameraHandler extends BukkitRunnable {
 		if (num > camera_points.size() - 1)
 			num = camera_points.size() - 1;
 
-		if (!camera_points.get(num).split(":", 2)[0].equalsIgnoreCase("location")) {
+		CameraStep cameraStep = camera_points.get(num);
+		if (!(cameraStep instanceof LocationStep)) {
 			player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "Point " + (num + 1) + " is not a location!");
 			return this;
 		}
@@ -228,7 +228,7 @@ public class CameraHandler extends BukkitRunnable {
 
 		previous_gamemode = player.getGameMode();
 		previous_player_location = player.getLocation();
-		Location point = Util.deserializeLocation(camera_points.get(num).split(":", 3)[2]);
+		Location point = ((LocationStep) cameraStep).getPoint();
 
 		previous_invisible = Util.isPlayerInvisible(player);
 
@@ -240,7 +240,7 @@ public class CameraHandler extends BukkitRunnable {
 		}
 		player.teleport(point);
 
-		runTaskLater(this.plugin, preview_time * 20);  // drop out of preview preview_time seconds later.
+		runTaskLater(this.plugin, preview_time * 20L);  // drop out of preview preview_time seconds later.
 		return this;
 	}
 

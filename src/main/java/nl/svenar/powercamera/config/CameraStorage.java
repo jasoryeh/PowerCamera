@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import java.util.stream.Collectors;
+import nl.svenar.powercamera.CameraStep;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -143,11 +145,22 @@ public class CameraStorage {
 		}
 	}
 
-	public List<String> getPoints(String camera_name) {
-		if (!camera_exists(camera_name))
+	public List<String> getRawPoints(String camera_name) {
+		if (!camera_exists((camera_name))) {
+			return null;
+		}
+
+		return getConfig()
+				.getStringList("cameras." + get_camera_name_ignorecase(camera_name) + ".points");
+	}
+	public List<CameraStep> getPoints(String camera_name) {
+		List<String> rawPoints = this.getRawPoints(camera_name);
+		if (rawPoints == null)
 			return null;
 
-		return getConfig().getStringList("cameras." + get_camera_name_ignorecase(camera_name) + ".points");
+		return rawPoints.stream()
+				.map(CameraStep::deserialize)
+				.collect(Collectors.toList());
 	}
 
 	public boolean setDuration(String camera_name, int duration) {
