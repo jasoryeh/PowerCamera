@@ -15,7 +15,7 @@ public class cmd_addpoint extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.addpoint")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_ADDPOINT)) {
 			String easing = "linear";
 			if (args.length == 0) {
 				String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());

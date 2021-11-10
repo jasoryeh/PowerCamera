@@ -15,7 +15,7 @@ public class cmd_select extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.select")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_SELECT)) {
 			if (args.length == 1) {
 				String camera_name = args[0];
 				if (plugin.getConfigCameras().camera_exists(camera_name)) {

@@ -15,7 +15,7 @@ public class cmd_create extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.create")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_CREATE)) {
 			if (args.length == 1) {
 				String camera_name = args[0];
 				if (plugin.getConfigCameras().create_camera(camera_name)) {

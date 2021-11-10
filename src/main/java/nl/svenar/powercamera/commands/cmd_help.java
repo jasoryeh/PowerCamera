@@ -18,7 +18,7 @@ public class cmd_help extends PowerCameraCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (sender instanceof Player) {
-			if (sender.hasPermission("powercamera.cmd.help")) {
+			if (sender.hasPermission(PowerCameraPermissions.CMD_HELP)) {
 				String tellrawbase = "tellraw %player% [\"\",{\"text\":\"[\",\"color\":\"black\"},{\"text\":\"/%cmd% %arg%\",\"color\":\"green\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/%cmd% %arg%\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"/%cmd% %arg%\"}},{\"text\":\"]\",\"color\":\"black\"},{\"text\":\" %help%\",\"color\":\"dark_green\"}]";
 				ArrayList<String> help_messages = new ArrayList<String>();
 

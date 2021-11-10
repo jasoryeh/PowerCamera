@@ -16,7 +16,7 @@ public class cmd_setduration extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.setduration")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_SETDURATION)) {
 			if (args.length == 1) {
 				int duration = Util.timeStringToSecondsConverter(args[0]);
 

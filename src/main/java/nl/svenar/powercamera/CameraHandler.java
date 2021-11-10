@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import nl.svenar.powercamera.commands.PowerCameraPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -140,7 +141,7 @@ public class CameraHandler extends BukkitRunnable {
 			player.teleport(camera_path_points.get(0));
 		}
 
-		if (!this.player.hasPermission("powercamera.hidestartmessages"))
+		if (!this.player.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES))
 			this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.camera_name + "'!");
 		return this;
 	}
@@ -159,7 +160,7 @@ public class CameraHandler extends BukkitRunnable {
 			// todo: 1.8 -> player.setInvisible(previous_invisible);
 		}
 
-		if (!this.player.hasPermission("powercamera.hidestartmessages"))
+		if (!this.player.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES))
 			player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + camera_name + "' has ended!");
 		return this;
 	}

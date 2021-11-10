@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -28,8 +29,10 @@ public class PowerCamera extends JavaPlugin {
 	public final String WEBSITE_URL = "https://svenar.nl/powercamera";
 	public final List<String> DONATION_URLS = Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar");
 
-	private PluginDescriptionFile pdf;
+	@Getter
+	private PluginDescriptionFile pluginDescriptionFile;
 	private String plugin_chat_prefix = ChatColor.BLACK + "[" + ChatColor.AQUA + "%plugin_name%" + ChatColor.BLACK + "] ";
+	@Getter
 	private PluginConfig config_plugin;
 	private CameraStorage config_cameras;
 
@@ -43,9 +46,9 @@ public class PowerCamera extends JavaPlugin {
 	}
 
 	public void onEnable() {
-		pdf = this.getDescription();
+		pluginDescriptionFile = this.getDescription();
 
-		plugin_chat_prefix = plugin_chat_prefix.replace("%plugin_name%", pdf.getName());
+		plugin_chat_prefix = plugin_chat_prefix.replace("%plugin_name%", pluginDescriptionFile.getName());
 
 		Bukkit.getServer().getPluginManager().registerEvents((Listener) new OnMove(this), (Plugin) this);
 		Bukkit.getServer().getPluginManager().registerEvents((Listener) new OnJoin(this), (Plugin) this);
@@ -67,10 +70,6 @@ public class PowerCamera extends JavaPlugin {
 		if (getLogger() != null && getPluginDescriptionFile() != null) {
 			getLogger().info("Disabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
 		}
-	}
-
-	public PluginDescriptionFile getPluginDescriptionFile() {
-		return this.pdf;
 	}
 
 	public String getPluginChatPrefix() {

@@ -22,7 +22,7 @@ public class cmd_invisible extends PowerCameraCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = (Player) sender;
-		if (sender.hasPermission("powercamera.cmd.invisible")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_INVISIBLE)) {
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("false")) {
 					boolean set_invisible = args[0].equalsIgnoreCase("true");

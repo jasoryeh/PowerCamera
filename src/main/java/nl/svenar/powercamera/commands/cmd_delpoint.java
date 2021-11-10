@@ -15,7 +15,7 @@ public class cmd_delpoint extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.delpoint")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_DELPOINT)) {
 			if (args.length == 0 || args.length == 1) {
 				int num = -1;
 				if (args.length == 1) {

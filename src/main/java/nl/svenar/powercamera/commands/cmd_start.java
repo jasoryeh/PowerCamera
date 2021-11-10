@@ -17,7 +17,7 @@ public class cmd_start extends PowerCameraCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (args.length == 0) {
-			if (sender.hasPermission("powercamera.cmd.start")) {
+			if (sender.hasPermission(PowerCameraPermissions.CMD_START)) {
 				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == PowerCamera.CAMERA_MODE.NONE) {
 					String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 					if (camera_name != null) {
@@ -36,7 +36,7 @@ public class cmd_start extends PowerCameraCommand {
 		} else if (args.length == 1) {
 			String camera_name = args[0];
 
-			if (sender.hasPermission("powercamera.cmd.start." + camera_name.toLowerCase())) {
+			if (sender.hasPermission(PowerCameraPermissions.CMD_STARTOTHER + "." + camera_name.toLowerCase())) {
 				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == PowerCamera.CAMERA_MODE.NONE) {
 					if (this.plugin.getConfigCameras().camera_exists(camera_name)) {
 						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandler(plugin, (Player) sender, camera_name).generatePath().start());

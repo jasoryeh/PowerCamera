@@ -4,6 +4,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import nl.svenar.powercamera.PowerCamera;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 public abstract class PowerCameraCommand {
 	
@@ -28,5 +30,22 @@ public abstract class PowerCameraCommand {
 	
 	public COMMAND_EXECUTOR getCommandExecutor() {
 		return this.ce;
+	}
+
+	public boolean canExecute(CommandSender sender) {
+		if (this.getCommandExecutor() == COMMAND_EXECUTOR.ALL) {
+			return true;
+		}
+
+		switch (this.getCommandExecutor()) {
+			case ALL:
+				return true;
+			case PLAYER:
+				return sender instanceof Player;
+			case CONSOLE:
+				return sender instanceof ConsoleCommandSender;
+			default:
+				return false;
+		}
 	}
 }

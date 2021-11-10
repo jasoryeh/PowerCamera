@@ -14,7 +14,7 @@ public class cmd_remove extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.remove")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_REMOVE)) {
 			if (args.length == 1) {
 				String camera_name = args[0];
 				if (plugin.getConfigCameras().remove_camera(camera_name)) {

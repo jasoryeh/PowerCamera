@@ -19,7 +19,7 @@ public class cmd_info extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission("powercamera.cmd.info")) {
+		if (sender.hasPermission(PowerCameraPermissions.CMD_INFO)) {
 			if (args.length == 0) {
 				String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 				if (camera_name != null) {

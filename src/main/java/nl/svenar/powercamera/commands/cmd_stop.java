@@ -15,17 +15,18 @@ public class cmd_stop extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender instanceof Player) {
-			if (sender.hasPermission("powercamera.cmd.stop")) {
-				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) != null && this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) != PowerCamera.CAMERA_MODE.NONE && this.plugin.player_camera_handler.get(((Player) sender).getUniqueId()) != null) {
-					this.plugin.player_camera_handler.get(((Player) sender).getUniqueId()).stop();
-					if (!sender.hasPermission("powercamera.hidestartmessages")) sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Current camera stopped");
-				} else {
-					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera active!");
-				}
-			} else {
-				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "You do not have permission to execute this command");
+		// guaranteed player
+		if (!sender.hasPermission(PowerCameraPermissions.CMD_STOP)) {
+			sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "You do not have permission to execute this command");
+			return false;
+		}
+		if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) != null && this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) != PowerCamera.CAMERA_MODE.NONE && this.plugin.player_camera_handler.get(((Player) sender).getUniqueId()) != null) {
+			this.plugin.player_camera_handler.get(((Player) sender).getUniqueId()).stop();
+			if (!sender.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES)) {
+				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Current camera stopped");
 			}
+		} else {
+			sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera active!");
 		}
 
 		return false;
