@@ -1,9 +1,8 @@
 package nl.svenar.powercamera.commands;
 
+import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,7 +25,7 @@ public abstract class PowerCameraCommand {
 		this.ce = ce;
 	}
 	
-	public abstract boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args);
+	public abstract boolean onCommand(PowerCommandSender sender, Command cmd, String commandLabel, String[] args);
 	
 	public COMMAND_EXECUTOR getCommandExecutor() {
 		return this.ce;
@@ -47,5 +46,9 @@ public abstract class PowerCameraCommand {
 			default:
 				return false;
 		}
+	}
+
+	protected String formatMessage(String msg) {
+		return this.plugin.getPluginChatPrefix() + msg;
 	}
 }

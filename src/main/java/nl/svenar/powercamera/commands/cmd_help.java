@@ -1,13 +1,11 @@
 package nl.svenar.powercamera.commands;
 
 import java.util.ArrayList;
-
+import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import nl.svenar.powercamera.PowerCamera;
 
 public class cmd_help extends PowerCameraCommand {
 
@@ -16,10 +14,10 @@ public class cmd_help extends PowerCameraCommand {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+	public boolean onCommand(PowerCommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (sender instanceof Player) {
 			if (!sender.hasPermission(PowerCameraPermissions.CMD_HELP)) {
-				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "You do not have permission to execute this command");
+				sender.sendRawMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "You do not have permission to execute this command");
 				return false;
 			}
 
@@ -53,23 +51,23 @@ public class cmd_help extends PowerCameraCommand {
 				}
 			}
 		} else {
-			sender.sendMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "----------" + ChatColor.AQUA + plugin.getPluginDescriptionFile().getName() + ChatColor.DARK_AQUA + "----------" + ChatColor.BLUE + "===");
+			sender.sendRawMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "----------" + ChatColor.AQUA + plugin.getPluginDescriptionFile().getName() + ChatColor.DARK_AQUA + "----------" + ChatColor.BLUE + "===");
 
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " create <name>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Create a new camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " remove <name>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Remove a camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " addpoint" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Add an point to a camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " addcommand <command>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Add an command to a camera path, %player% gets replaced with the player's name");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " delpoint [point_number]" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Remove an point from a camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " select <name>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Select a camera path by name");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " preview <point_number>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Preview a point on the selected camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " info" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Info about the currently selected camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " setduration <duration>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Set the total duration of the current camera path");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " start [cameraname]" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Run the camera");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " stop" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Stop the camera");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.GREEN + "/" + commandLabel + " startother <playername> <cameraname>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Run a camera for a different player");
-			sender.sendMessage(ChatColor.BLACK + "[" + ChatColor.GREEN + "/" + commandLabel + " stats" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Show plugin stats");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " create <name>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Create a new camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " remove <name>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Remove a camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " addpoint" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Add an point to a camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " addcommand <command>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Add an command to a camera path, %player% gets replaced with the player's name");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " delpoint [point_number]" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Remove an point from a camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " select <name>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Select a camera path by name");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " preview <point_number>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Preview a point on the selected camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " info" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Info about the currently selected camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " setduration <duration>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Set the total duration of the current camera path");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " start [cameraname]" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Run the camera");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.RED + "/" + commandLabel + " stop" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Stop the camera");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.GREEN + "/" + commandLabel + " startother <playername> <cameraname>" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Run a camera for a different player");
+			sender.sendRawMessage(ChatColor.BLACK + "[" + ChatColor.GREEN + "/" + commandLabel + " stats" + ChatColor.BLACK + "] " + ChatColor.DARK_GREEN + "Show plugin stats");
 
-			sender.sendMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "-------------------------------" + ChatColor.BLUE + "===");
+			sender.sendRawMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "-------------------------------" + ChatColor.BLUE + "===");
 		}
 
 		return false;

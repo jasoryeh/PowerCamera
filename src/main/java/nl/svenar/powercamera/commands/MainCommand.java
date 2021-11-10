@@ -2,13 +2,11 @@ package nl.svenar.powercamera.commands;
 
 import java.util.Arrays;
 import java.util.HashMap;
-
+import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
-import nl.svenar.powercamera.PowerCamera;
 
 public class MainCommand implements CommandExecutor {
 
@@ -57,16 +55,19 @@ public class MainCommand implements CommandExecutor {
 			PowerCameraCommand command_handler = get_powercamera_command(command);
 
 			if (command_handler == null) {
-				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "Unknown Command");
+				sender.sendMessage(ChatColor.DARK_RED + "Unknown Command");
 				return false;
 			}
 
 			if (!command_handler.canExecute(sender)) {
-				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "Only players can use this command");
+				sender.sendMessage(ChatColor.DARK_RED + "Only players can use this command");
 				return false;
 			}
 
-			return command_handler.onCommand(sender, cmd, commandLabel, Arrays.copyOfRange(args, 1, args.length));
+			return command_handler.onCommand(
+					PowerCommandSender.of(command_handler, sender),
+					cmd, commandLabel,
+					Arrays.copyOfRange(args, 1, args.length));
 		}
 		return false;
 	}
