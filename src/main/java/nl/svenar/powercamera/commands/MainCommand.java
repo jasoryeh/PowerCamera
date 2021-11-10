@@ -61,7 +61,7 @@ public class MainCommand implements CommandExecutor {
 				return false;
 			}
 
-			if (command_handler.canExecute(sender)) {
+			if (!command_handler.canExecute(sender)) {
 				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "Only players can use this command");
 				return false;
 			}
