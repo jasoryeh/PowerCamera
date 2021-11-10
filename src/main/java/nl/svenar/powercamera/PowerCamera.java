@@ -1,7 +1,6 @@
 package nl.svenar.powercamera;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +15,6 @@ import nl.svenar.powercamera.events.OnMove;
 import nl.svenar.powercamera.metrics.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,19 +40,19 @@ public class PowerCamera extends JavaPlugin {
 	}
 
 	public void onEnable() {
-		pluginDescriptionFile = this.getDescription();
+		this.pluginDescriptionFile = this.getDescription();
 
-		plugin_chat_prefix = plugin_chat_prefix.replace("%plugin_name%", pluginDescriptionFile.getName());
+		this.plugin_chat_prefix = plugin_chat_prefix.replace("%plugin_name%", pluginDescriptionFile.getName());
 
-		Bukkit.getServer().getPluginManager().registerEvents((Listener) new OnMove(this), (Plugin) this);
-		Bukkit.getServer().getPluginManager().registerEvents((Listener) new OnJoin(this), (Plugin) this);
-		Bukkit.getServer().getPluginCommand("powercamera").setExecutor((CommandExecutor) new MainCommand(this));
+		Bukkit.getServer().getPluginManager().registerEvents(new OnMove(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new OnJoin(this), this);
+		Bukkit.getServer().getPluginCommand("powercamera").setExecutor(new MainCommand(this));
 		Bukkit.getServer().getPluginCommand("powercamera").setTabCompleter(new ChatTabExecutor(this));
 
-		setupConfig();
+		this.setupConfig();
 
-		getLogger().info("Enabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
-		getLogger().info("If you'd like to donate, please visit " + DONATION_URLS.get(0) + " or " + DONATION_URLS
+		this.getLogger().info("Enabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
+		this.getLogger().info("If you'd like to donate, please visit " + DONATION_URLS.get(0) + " or " + DONATION_URLS
 				.get(1));
 
 		int pluginId = 9107;
@@ -71,62 +67,23 @@ public class PowerCamera extends JavaPlugin {
 	}
 
 	public String getPluginChatPrefix() {
-		return plugin_chat_prefix;
+		return this.plugin_chat_prefix;
 	}
 
 	private void setupConfig() {
-		config_plugin = new PluginConfig(this);
-		config_cameras = new CameraStorage(this);
+		this.config_plugin = new PluginConfig(this);
+		this.config_plugin.init();
 
-		config_plugin.getConfig().set("version", null);
-		config_cameras.getConfig().set("version", null);
 
-		if (!config_plugin.getConfig().isSet("camera-effects.spectator-mode"))
-			config_plugin.getConfig().set("camera-effects.spectator-mode", true);
-
-		if (!config_plugin.getConfig().isSet("camera-effects.invisible"))
-			config_plugin.getConfig().set("camera-effects.invisible", false);
-
-		if (config_plugin.getConfig().isSet("on-new-player-join-camera-path")) {
-			ArrayList<String> list = new ArrayList<>();
-			list.add(config_plugin.getConfig().getString("on-new-player-join-camera-path"));
-			config_plugin.getConfig().set("on-join.random-player-camera-path", list);
-			config_plugin.getConfig().set("on-join.show-once", true);
-			config_plugin.getConfig().set("on-new-player-join-camera-path", null);
-		}
-
-		for (String camera_name : config_cameras.getCameras()) {
-			/*
-			 * Assumes all non-labeled points are location steps, and edits the config as such.
-			 */
-			List<String> points = config_cameras.getRawPoints(camera_name);
-			List<String> new_points = new ArrayList<String>();
-			for (String point : points) {
-				if (!point.startsWith("location:") && !point.startsWith("command:")) {
-					point = "location:" + point;
-				}
-				
-				if (point.startsWith("location:") && !(point.startsWith("location:linear:") || point.startsWith("location:teleport:"))) {
-					point = point.replaceFirst("location:", "location:linear:");
-				}
-				
-				new_points.add(point);
-			}
-			config_cameras.getConfig().set("cameras." + camera_name + ".points", new_points);
-		}
-
-		config_plugin.getConfig().set("version", getPluginDescriptionFile().getVersion());
-		config_plugin.saveConfig();
-
-		config_cameras.getConfig().set("version", getPluginDescriptionFile().getVersion());
-		config_cameras.saveConfig();
+		this.config_cameras = new CameraStorage(this);
+		this.config_cameras.init();
 	}
 
 	public PluginConfig getConfigPlugin() {
-		return config_plugin;
+		return this.config_plugin;
 	}
 
 	public CameraStorage getConfigCameras() {
-		return config_cameras;
+		return this.config_cameras;
 	}
 }

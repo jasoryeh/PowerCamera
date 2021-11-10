@@ -3,6 +3,7 @@ package nl.svenar.powercamera.config;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,7 +21,30 @@ public class PluginConfig {
 	public PluginConfig(PowerCamera plugin) {
 		this.plugin = plugin;
 
-		createConfigFile();
+		this.createConfigFile();
+	}
+
+	/**
+	 * Process all config data.
+	 */
+	public void init() {
+		FileConfiguration config = this.getConfig();
+		config.set("version", null);
+		if (!config.isSet("camera-effects.spectator-mode"))
+			config.set("camera-effects.spectator-mode", true);
+
+		if (!config.isSet("camera-effects.invisible"))
+			config.set("camera-effects.invisible", false);
+
+		if (config.isSet("on-new-player-join-camera-path")) {
+			ArrayList<String> list = new ArrayList<>();
+			list.add(config.getString("on-new-player-join-camera-path"));
+			config.set("on-join.random-player-camera-path", list);
+			config.set("on-join.show-once", true);
+			config.set("on-new-player-join-camera-path", null);
+		}
+		config.set("version", this.plugin.getPluginDescriptionFile().getVersion());
+		this.saveConfig();
 	}
 
 	private void createConfigFile() {

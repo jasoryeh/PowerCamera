@@ -26,7 +26,36 @@ public class CameraStorage {
 	public CameraStorage(PowerCamera plugin) {
 		this.plugin = plugin;
 
-		createConfigFile();
+		this.createConfigFile();
+	}
+
+	/**
+	 * Initialize data
+	 */
+	public void init() {
+		FileConfiguration config = this.getConfig();
+		config.set("version", null);
+		for (String camera_name : this.getCameras()) {
+			/*
+			 * Assumes all non-labeled points are location steps, and edits the config as such.
+			 */
+			List<String> points = this.getRawPoints(camera_name);
+			List<String> new_points = new ArrayList<String>();
+			for (String point : points) {
+				if (!point.startsWith("location:") && !point.startsWith("command:")) {
+					point = "location:" + point;
+				}
+
+				if (point.startsWith("location:") && !(point.startsWith("location:linear:") || point.startsWith("location:teleport:"))) {
+					point = point.replaceFirst("location:", "location:linear:");
+				}
+
+				new_points.add(point);
+			}
+			config.set("cameras." + camera_name + ".points", new_points);
+		}
+		config.set("version", this.plugin.getPluginDescriptionFile().getVersion());
+		this.saveConfig();
 	}
 
 	private void createConfigFile() {
