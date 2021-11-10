@@ -22,7 +22,7 @@ public class cmd_preview extends PowerCameraCommand {
 				if (args.length == 1) {
 					String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 					if (camera_name != null) {
-						int preview_time = plugin.getConfigPlugin().getConfig().getInt("point-preview-time");
+						int preview_time = plugin.getConfigPlugin().previewTime();
 
 						int num = Integer.parseInt(args[0]) - 1;
 

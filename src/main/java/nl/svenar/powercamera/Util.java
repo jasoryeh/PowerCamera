@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Util {
@@ -67,10 +68,23 @@ public class Util {
 
 	public static boolean isPlayerInvisible(Player player) {
 		try {
-			// todo: 1.8 -> return player.isInvisible();
+			// todo: 1.8 -> return player.isInvisible(); // cross compile: uncomment this code to compile with a newer version for compatibility
 			throw new NoSuchMethodError("Not implemented.");
 		} catch (NoSuchMethodError e) {
 			return player.hasPotionEffect(PotionEffectType.INVISIBILITY);
+		}
+	}
+
+	public static void setPlayerInvisible(Player player, boolean yes) {
+		try {
+			// todo: 1.8 -> player.setInvisible(yn); // cross compile: uncomment this code to compile with a newer version for compatibility
+			throw new NoSuchMethodError("Not implemented");
+		} catch(NoSuchMethodError e) {
+			if (yes) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999, 1, false, false));
+			} else if (isPlayerInvisible(player)) {
+				player.removePotionEffect(PotionEffectType.INVISIBILITY);
+			}
 		}
 	}
 }

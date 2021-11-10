@@ -50,14 +50,14 @@ public class cmd_stats extends PowerCameraCommand {
 
 		String invisibility_mode = "None";
 
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode") && this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible")) {
+		if (this.plugin.getConfigPlugin().shouldUseSpectator() && this.plugin.getConfigPlugin().shouldUseInvisibility()) {
 			invisibility_mode = "spectator & invisible";
 		} else {
-			if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode")) {
+			if (this.plugin.getConfigPlugin().shouldUseSpectator()) {
 				invisibility_mode = "specator";
 			}
 
-			if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible")) {
+			if (this.plugin.getConfigPlugin().shouldUseInvisibility()) {
 				invisibility_mode = "invisible";
 			}
 		}

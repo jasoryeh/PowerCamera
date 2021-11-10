@@ -129,10 +129,10 @@ public class CameraHandler extends BukkitRunnable {
 		this.previous_player_location = this.player.getLocation();
 		this.previous_invisible = Util.isPlayerInvisible(this.player);
 
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+		if (this.plugin.getConfigPlugin().shouldUseSpectator())
 			player.setGameMode(GameMode.SPECTATOR);
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible")) {
-			// todo: 1.8 -> player.setInvisible(true);
+		if (this.plugin.getConfigPlugin().shouldUseInvisibility()) {
+			Util.setPlayerInvisible(player, true);
 		}
 
 		this.plugin.player_camera_mode.put(this.player.getUniqueId(), CAMERA_MODE.VIEW);
@@ -146,6 +146,15 @@ public class CameraHandler extends BukkitRunnable {
 		return this;
 	}
 
+	public void restorePlayer() {
+		player.teleport(previous_player_location);
+		if (this.plugin.getConfigPlugin().shouldUseSpectator())
+			player.setGameMode(previous_gamemode);
+		if (this.plugin.getConfigPlugin().shouldUseInvisibility()) {
+			Util.setPlayerInvisible(player, previous_invisible);
+		}
+	}
+
 	public CameraHandler stop() {
 		plugin.player_camera_mode.put(player.getUniqueId(), CAMERA_MODE.NONE);
 		try {
@@ -153,12 +162,7 @@ public class CameraHandler extends BukkitRunnable {
 		} catch (Exception e) {
 		}
 
-		player.teleport(previous_player_location);
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
-			player.setGameMode(previous_gamemode);
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible")) {
-			// todo: 1.8 -> player.setInvisible(previous_invisible);
-		}
+		this.restorePlayer();
 
 		if (!this.player.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES))
 			player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + camera_name + "' has ended!");
@@ -169,6 +173,24 @@ public class CameraHandler extends BukkitRunnable {
 		return new Vector(end.getX() - start.getX(), end.getY() - start.getY(), end.getZ() - start.getZ());
 	}
 
+	private void nextFrame() {
+		Location current_pos = camera_path_points.get(this.ticks);
+		Location next_point = camera_path_points.get(this.ticks + 1);
+
+		player.teleport(camera_path_points.get(this.ticks));
+
+		if (camera_path_commands.containsKey(this.ticks)) {
+			for (String cmd : camera_path_commands.get(this.ticks)) {
+				String command = cmd.replaceAll("%player%", player.getName());
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+			}
+		}
+
+		player.setVelocity(calculateVelocity(current_pos, next_point));
+
+		this.ticks += 1;
+	}
+
 	@Override
 	public void run() {
 		if (plugin.player_camera_mode.get(player.getUniqueId()) == PowerCamera.CAMERA_MODE.VIEW) {
@@ -176,31 +198,11 @@ public class CameraHandler extends BukkitRunnable {
 				this.stop();
 				return;
 			}
-
-			Location current_pos = camera_path_points.get(this.ticks);
-			Location next_point = camera_path_points.get(this.ticks + 1);
-
-			player.teleport(camera_path_points.get(this.ticks));
-
-			if (camera_path_commands.containsKey(this.ticks)) {
-				for (String cmd : camera_path_commands.get(this.ticks)) {
-					String command = cmd.replaceAll("%player%", player.getName());
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-				}
-			}
-
-			player.setVelocity(calculateVelocity(current_pos, next_point));
-
-			this.ticks += 1;
+			this.nextFrame();
 		} else {
 			if (plugin.player_camera_mode.get(player.getUniqueId()) == PowerCamera.CAMERA_MODE.NONE)
 				return;
-			player.teleport(previous_player_location);
-			if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
-				player.setGameMode(previous_gamemode);
-			if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible")) {
-				// todo: 1.8 -> player.setInvisible(previous_invisible);
-			}
+			this.restorePlayer();
 			plugin.player_camera_mode.put(player.getUniqueId(), PowerCamera.CAMERA_MODE.NONE);
 			player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview ended!");
 		}
@@ -228,18 +230,17 @@ public class CameraHandler extends BukkitRunnable {
 		previous_player_location = player.getLocation();
 		Location point = Util.deserializeLocation(camera_points.get(num).split(":", 3)[2]);
 
-		// todo: 1.8 -> previous_invisible = player.isInvisible();
-		previous_invisible = false;
+		previous_invisible = Util.isPlayerInvisible(player);
 
 		plugin.player_camera_mode.put(player.getUniqueId(), PowerCamera.CAMERA_MODE.PREVIEW);
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+		if (this.plugin.getConfigPlugin().shouldUseSpectator())
 			player.setGameMode(GameMode.SPECTATOR);
-		if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible")) {
-			// todo: 1.8 -> player.setInvisible(true);
+		if (this.plugin.getConfigPlugin().shouldUseInvisibility()) {
+			Util.setPlayerInvisible(player, true);
 		}
 		player.teleport(point);
 
-		runTaskLater(this.plugin, preview_time * 20);
+		runTaskLater(this.plugin, preview_time * 20);  // drop out of preview preview_time seconds later.
 		return this;
 	}
 
