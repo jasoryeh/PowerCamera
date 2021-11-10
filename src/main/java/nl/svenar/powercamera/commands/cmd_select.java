@@ -15,22 +15,23 @@ public class cmd_select extends PowerCameraCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (sender.hasPermission(PowerCameraPermissions.CMD_SELECT)) {
-			if (args.length == 1) {
-				String camera_name = args[0];
-				if (plugin.getConfigCameras().camera_exists(camera_name)) {
-					plugin.player_selected_camera.put(((Player) sender).getUniqueId(), plugin.getConfigCameras().get_camera_name_ignorecase(camera_name));
-					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Camera '" + camera_name + "' selected!");
-				} else {
-					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "A camera with the name '" + camera_name + "' does not exists!");
-				}
-
-			} else {
-				sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "Usage: /" + commandLabel + " select <name>");
-			}
-		} else {
+		if (!sender.hasPermission(PowerCameraPermissions.CMD_SELECT)) {
 			sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "You do not have permission to execute this command");
+			return false;
 		}
+		if (args.length != 1) {
+			sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.DARK_RED + "Usage: /" + commandLabel + " select <name>");
+			return false;
+		}
+
+		String camera_name = args[0];
+		if (!plugin.getConfigCameras().camera_exists(camera_name)) {
+			sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "A camera with the name '" + camera_name + "' does not exists!");
+			return false;
+		}
+
+		plugin.player_selected_camera.put(((Player) sender).getUniqueId(), plugin.getConfigCameras().get_camera_name_ignorecase(camera_name));
+		sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Camera '" + camera_name + "' selected!");
 
 		return false;
 	}
