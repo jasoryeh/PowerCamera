@@ -6,16 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import nl.svenar.powercamera.commands.MainCommand;
 import nl.svenar.powercamera.config.CameraStorage;
 import nl.svenar.powercamera.config.PluginConfig;
@@ -23,6 +14,13 @@ import nl.svenar.powercamera.events.ChatTabExecutor;
 import nl.svenar.powercamera.events.OnJoin;
 import nl.svenar.powercamera.events.OnMove;
 import nl.svenar.powercamera.metrics.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PowerCamera extends JavaPlugin {
 
@@ -41,7 +39,7 @@ public class PowerCamera extends JavaPlugin {
 	public HashMap<UUID, CameraHandler> player_camera_handler = new HashMap<UUID, CameraHandler>(); // When the player is viewing the camera (/pc start & /pc preview)
 	public Instant powercamera_start_time = Instant.now();
 
-	public static enum CAMERA_MODE {
+	public enum CAMERA_MODE {
 		NONE, PREVIEW, VIEW
 	}
 
