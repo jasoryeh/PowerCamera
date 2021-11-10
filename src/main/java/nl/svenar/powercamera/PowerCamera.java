@@ -25,8 +25,8 @@ import nl.svenar.powercamera.metrics.Metrics;
 
 public class PowerCamera extends JavaPlugin {
 
-	public String website_url = "https://svenar.nl/powercamera";
-	public ArrayList<String> donation_urls = new ArrayList<String>(Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar"));
+	public final String WEBSITE_URL = "https://svenar.nl/powercamera";
+	public final List<String> DONATION_URLS = Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar");
 
 	private PluginDescriptionFile pdf;
 	private String plugin_chat_prefix = ChatColor.BLACK + "[" + ChatColor.AQUA + "%plugin_name%" + ChatColor.BLACK + "] ";
@@ -55,7 +55,8 @@ public class PowerCamera extends JavaPlugin {
 		setupConfig();
 
 		getLogger().info("Enabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
-		getLogger().info("If you'd like to donate, please visit " + donation_urls.get(0) + " or " + donation_urls.get(1));
+		getLogger().info("If you'd like to donate, please visit " + DONATION_URLS.get(0) + " or " + DONATION_URLS
+				.get(1));
 
 		int pluginId = 9107;
 		@SuppressWarnings("unused")
