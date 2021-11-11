@@ -43,11 +43,7 @@ public class CameraStorage {
 			List<String> new_points = new ArrayList<String>();
 			for (String point : points) {
 				if (!point.startsWith("location:") && !point.startsWith("command:")) {
-					point = "location:" + point;
-				}
-
-				if (point.startsWith("location:") && !(point.startsWith("location:linear:") || point.startsWith("location:teleport:"))) {
-					point = point.replaceFirst("location:", "location:linear:");
+					point = "location:linear" + point;
 				}
 
 				new_points.add(point);

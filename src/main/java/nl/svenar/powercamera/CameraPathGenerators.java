@@ -72,6 +72,11 @@ public class CameraPathGenerators {
             case TELEPORT:
               path.add(PlayableTick.of(raw_point_next.getPoint()));
               break;
+            case JUMP:
+              if (j == 0) {
+                path.add(PlayableTick.of(raw_point_next.getPoint()));
+              }
+              break;
             default:
               break;
           }

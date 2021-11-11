@@ -13,6 +13,7 @@ public class LocationStep extends CameraStep {
   public enum MovementType {
     LINEAR,
     TELEPORT,
+    JUMP,
     UNKNOWN
   }
 

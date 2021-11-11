@@ -5,7 +5,6 @@ import nl.svenar.powercamera.CameraManager.CameraMode;
 import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.entity.Player;
 
 public class cmd_start extends PowerCameraCommand {
 
