@@ -57,7 +57,7 @@ public class CameraTask extends BukkitRunnable {
     }
     if (this.handler.mode == CameraMode.VIEW) {
       // viewing
-      if (this.handler.ticks > this.handler.camera_path_points.size() - 2) {
+      if (this.handler.ticks > this.handler.camera_path.size() - 2) {
         this.stop(); // todo
         return;
       }

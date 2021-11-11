@@ -39,9 +39,8 @@ public class cmd_preview extends PowerCameraCommand {
 
 		int preview_time = plugin.getConfigPlugin().previewTime();
 		int num = Integer.parseInt(args[0]) - 1;
-		this.plugin.getCamera_manager().getCameraHandler(sender)
-				.generatePath()
-				.preview((Player) sender.getSender(), num, preview_time);
+		cameraHandler.generatePath();
+		cameraHandler.preview((Player) sender.getSender(), num, preview_time);
 
 		return false;
 	}

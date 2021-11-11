@@ -46,7 +46,8 @@ public class cmd_startother extends PowerCameraCommand {
 		}
 
 		cameraHandler.setCamera_name(camera_name);
-		cameraHandler.generatePath().start();
+		cameraHandler.generatePath();
+		cameraHandler.start();
 		sender.sendMessage(ChatColor.GREEN + "Playing '" + camera_name + "' on player: " + target_player.getName());
 
 		return false;

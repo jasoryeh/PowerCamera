@@ -29,6 +29,8 @@ public class PowerCamera extends JavaPlugin {
 	private PluginConfig config_plugin;
 	private CameraStorage config_cameras;
 	@Getter
+	private CameraPathGenerators camera_generators;
+	@Getter
 	private CameraManager camera_manager;
 
 	public void onEnable() {
@@ -42,6 +44,7 @@ public class PowerCamera extends JavaPlugin {
 		Bukkit.getServer().getPluginCommand("powercamera").setTabCompleter(new ChatTabExecutor(this));
 
 		this.setupConfig();
+		this.camera_generators = new CameraPathGenerators(this);
 		this.camera_manager = new CameraManager(this);
 
 		this.getLogger().info("Enabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());

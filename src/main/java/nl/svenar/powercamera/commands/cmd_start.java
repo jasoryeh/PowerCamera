@@ -24,7 +24,8 @@ public class cmd_start extends PowerCameraCommand {
 						sender.sendMessage(ChatColor.RED + "No camera selected!");
 						sender.sendMessage(ChatColor.GREEN + "Select a camera by doing: /" + commandLabel + " select <name>");
 					} else {
-						cameraHandler.generatePath().start();
+						cameraHandler.generatePath();
+						cameraHandler.start();
 					}
 				} else {
 					sender.sendMessage(ChatColor.DARK_RED + "Camera already active!");
@@ -40,7 +41,8 @@ public class cmd_start extends PowerCameraCommand {
 				if (cameraHandler == null || cameraHandler.getMode() == CameraMode.NONE) {
 					if (this.plugin.getConfigCameras().camera_exists(camera_name)) {
 						cameraHandler.setCamera_name(camera_name);
-						cameraHandler.generatePath().start();
+						cameraHandler.generatePath();
+						cameraHandler.start();
 					} else {
 						sender.sendMessage(ChatColor.RED + "Camera '" + camera_name + "' not found!");
 					}

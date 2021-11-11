@@ -36,7 +36,8 @@ public class OnJoin implements Listener {
 							CameraHandler cameraHandler = this.plugin.getCamera_manager()
 									.getCameraHandler(e.getPlayer());
 							cameraHandler.setCamera_name(camera_name);
-							cameraHandler.generatePath().start();
+							cameraHandler.generatePath();
+							cameraHandler.start();
 						}
 					}
 				}
