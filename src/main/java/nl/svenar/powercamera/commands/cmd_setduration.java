@@ -29,7 +29,7 @@ public class cmd_setduration extends PowerCameraCommand {
 			return false;
 		}
 
-		String camera_name = plugin.player_selected_camera.get(((Player) sender.getSender()).getUniqueId());
+		String camera_name = this.plugin.getCamera_manager().getCameraHandler(((Player) sender.getSender()).getUniqueId()).getCamera_name();
 		if (camera_name == null) {
 			sender.sendMessage(ChatColor.RED + "No camera selected!");
 			sender.sendMessage(ChatColor.GREEN + "Select a camera by doing: /" + commandLabel + " select <name>");

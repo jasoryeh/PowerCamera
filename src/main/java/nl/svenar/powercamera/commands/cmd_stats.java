@@ -39,7 +39,7 @@ public class cmd_stats extends PowerCameraCommand {
 		sender.sendMessage(ChatColor.DARK_GREEN + "Bukkit version: " + ChatColor.GREEN + Bukkit.getServer().getBukkitVersion());
 		sender.sendMessage(ChatColor.DARK_GREEN + "Java version: " + ChatColor.GREEN + System.getProperty("java.version"));
 		sender.sendMessage(ChatColor.DARK_GREEN + plugin.getPluginDescriptionFile().getName() + " Version: " + ChatColor.GREEN + plugin.getPluginDescriptionFile().getVersion());
-		sender.sendMessage(ChatColor.DARK_GREEN + "Plugin uptime: " + ChatColor.GREEN + format.format(Duration.between(plugin.powercamera_start_time, current_time).toMillis()));
+		sender.sendMessage(ChatColor.DARK_GREEN + "Plugin uptime: " + ChatColor.GREEN + format.format(Duration.between(plugin.POWERCAMERA_START_TIME, current_time).toMillis()));
 		sender.sendMessage(ChatColor.DARK_GREEN + "Registered cameras: " + ChatColor.GREEN + plugin.getConfigCameras().getCameras().size());
 		sender.sendMessage(ChatColor.DARK_GREEN + "Registered players: " + ChatColor.GREEN + plugin.getConfigCameras().getPlayers().size());
 		sender.sendMessage(ChatColor.DARK_GREEN + "Invisibility mode: " + ChatColor.GREEN + invisibility_mode);

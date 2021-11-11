@@ -1,6 +1,7 @@
 package nl.svenar.powercamera.events;
 
-import nl.svenar.powercamera.PowerCamera.CAMERA_MODE;
+import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraManager.CameraMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,8 @@ public class OnMove implements Listener {
 	}
 
 	private boolean isWatchingPreview(Player p) {
-		return plugin.player_camera_mode.get(p.getUniqueId()) == CAMERA_MODE.PREVIEW;
+		CameraHandler cameraHandler = this.plugin.getCamera_manager().getCameraHandler(p);
+		return cameraHandler != null && cameraHandler.getMode() == CameraMode.PREVIEW;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)

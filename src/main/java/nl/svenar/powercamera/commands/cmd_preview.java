@@ -2,6 +2,7 @@ package nl.svenar.powercamera.commands;
 
 
 import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraManager.CameraMode;
 import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,9 +20,9 @@ public class cmd_preview extends PowerCameraCommand {
 			sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command");
 			return false;
 		}
-		if (this.plugin.player_camera_mode.get(((Player) sender.getSender()).getUniqueId()) != null
-				&& this.plugin.player_camera_mode.get(((Player) sender.getSender()).getUniqueId())
-				!= PowerCamera.CAMERA_MODE.NONE) {
+
+		CameraHandler cameraHandler = this.plugin.getCamera_manager().getCameraHandler(sender);
+		if (cameraHandler != null && cameraHandler.getMode() != CameraMode.NONE) {
 					sender.sendMessage(ChatColor.DARK_RED + "Camera already active!");
 					return false;
 		}
@@ -29,7 +30,7 @@ public class cmd_preview extends PowerCameraCommand {
 			sender.sendMessage(ChatColor.DARK_RED + "Usage: /" + commandLabel + " preview <point-number>");
 			return false;
 		}
-		String camera_name = plugin.player_selected_camera.get(((Player) sender.getSender()).getUniqueId());
+		String camera_name = cameraHandler.getCamera_name();
 		if (camera_name == null) {
 			sender.sendMessage(ChatColor.RED + "No camera selected!");
 			sender.sendMessage(ChatColor.GREEN + "Select a camera by doing: /" + commandLabel + " select <name>");
@@ -38,7 +39,9 @@ public class cmd_preview extends PowerCameraCommand {
 
 		int preview_time = plugin.getConfigPlugin().previewTime();
 		int num = Integer.parseInt(args[0]) - 1;
-		this.plugin.player_camera_handler.put(((Player) sender.getSender()).getUniqueId(), new CameraHandler(plugin, (Player) sender.getSender(), camera_name).generatePath().preview((Player) sender.getSender(), num, preview_time));
+		this.plugin.getCamera_manager().getCameraHandler(sender)
+				.generatePath()
+				.preview((Player) sender.getSender(), num, preview_time);
 
 		return false;
 	}

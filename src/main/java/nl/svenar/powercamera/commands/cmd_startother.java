@@ -1,6 +1,7 @@
 package nl.svenar.powercamera.commands;
 
 import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraManager.CameraMode;
 import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,9 +34,8 @@ public class cmd_startother extends PowerCameraCommand {
 			return false;
 		}
 
-		if (this.plugin.player_camera_mode.get(target_player.getUniqueId()) != null
-				&& this.plugin.player_camera_mode.get(target_player.getUniqueId())
-				!= PowerCamera.CAMERA_MODE.NONE) {
+		CameraHandler cameraHandler = this.plugin.getCamera_manager().getCameraHandler(target_player);
+		if (cameraHandler != null && cameraHandler.getMode() != CameraMode.NONE) {
 					sender.sendMessage(ChatColor.DARK_RED + "Player '" + target_player.getName() + "' already has a camera active!");
 					return false;
 		}
@@ -45,7 +45,8 @@ public class cmd_startother extends PowerCameraCommand {
 			return false;
 		}
 
-		this.plugin.player_camera_handler.put(target_player.getUniqueId(), new CameraHandler(plugin, target_player, camera_name).generatePath().start());
+		cameraHandler.setCamera_name(camera_name);
+		cameraHandler.generatePath().start();
 		sender.sendMessage(ChatColor.GREEN + "Playing '" + camera_name + "' on player: " + target_player.getName());
 
 		return false;

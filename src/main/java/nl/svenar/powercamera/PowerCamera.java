@@ -2,9 +2,7 @@ package nl.svenar.powercamera;
 
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import lombok.Getter;
 import nl.svenar.powercamera.commands.MainCommand;
 import nl.svenar.powercamera.config.CameraStorage;
@@ -22,6 +20,7 @@ public class PowerCamera extends JavaPlugin {
 
 	public final String WEBSITE_URL = "https://svenar.nl/powercamera";
 	public final List<String> DONATION_URLS = Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar");
+	public final Instant POWERCAMERA_START_TIME = Instant.now();
 
 	@Getter
 	private PluginDescriptionFile pluginDescriptionFile;
@@ -29,15 +28,8 @@ public class PowerCamera extends JavaPlugin {
 	@Getter
 	private PluginConfig config_plugin;
 	private CameraStorage config_cameras;
-
-	public HashMap<UUID, String> player_selected_camera = new HashMap<UUID, String>(); // Selected camera name
-	public HashMap<UUID, CAMERA_MODE> player_camera_mode = new HashMap<UUID, CAMERA_MODE>(); // When the player is viewing the camera (/pc start & /pc preview)
-	public HashMap<UUID, CameraHandler> player_camera_handler = new HashMap<UUID, CameraHandler>(); // When the player is viewing the camera (/pc start & /pc preview)
-	public Instant powercamera_start_time = Instant.now();
-
-	public enum CAMERA_MODE {
-		NONE, PREVIEW, VIEW
-	}
+	@Getter
+	private CameraManager camera_manager;
 
 	public void onEnable() {
 		this.pluginDescriptionFile = this.getDescription();
@@ -50,6 +42,7 @@ public class PowerCamera extends JavaPlugin {
 		Bukkit.getServer().getPluginCommand("powercamera").setTabCompleter(new ChatTabExecutor(this));
 
 		this.setupConfig();
+		this.camera_manager = new CameraManager(this);
 
 		this.getLogger().info("Enabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
 		this.getLogger().info("If you'd like to donate, please visit " + DONATION_URLS.get(0) + " or " + DONATION_URLS

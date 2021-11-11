@@ -6,40 +6,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import nl.svenar.powercamera.PowerCamera.CAMERA_MODE;
+import lombok.Getter;
+import nl.svenar.powercamera.CameraManager.CameraMode;
 import nl.svenar.powercamera.commands.PowerCameraPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class CameraHandler extends BukkitRunnable {
+@Getter
+public class CameraHandler {
 
-	private int single_frame_duration_ms = 50;
+	protected final int single_frame_duration_ms = 50;
 
-	private int ticks = 0;
+	protected int ticks = 0;
 
-	private PowerCamera plugin;
-	private Player player;
-	private String camera_name;
+	public final PowerCamera plugin;
+	protected Player player;
+	protected String camera_name;
+	protected CameraMode mode = CameraMode.NONE;
 
-	private List<Location> camera_path_points = new ArrayList<Location>();
-	private Map<Integer, ArrayList<String>> camera_path_commands = new HashMap<Integer, ArrayList<String>>();
+	protected List<Location> camera_path_points = new ArrayList<Location>();
+	protected Map<Integer, ArrayList<String>> camera_path_commands = new HashMap<Integer, ArrayList<String>>();
 
 	private GameMode previous_gamemode;
 	private Location previous_player_location;
 	private boolean previous_invisible;
 
+	private CameraTask runningTask;
+
 	public CameraHandler(PowerCamera plugin, Player player, String camera_name) {
 		this.plugin = plugin;
 		this.player = player;
+		this.setCamera_name(camera_name);
+	}
+
+	public void setCamera_name(String camera_name) {
 		this.camera_name = camera_name;
+		this.camera_path_points.clear();
+		this.camera_path_commands.clear();
+		this.ticks = 0;
+		this.storePlayerState();
 	}
 
 	public CameraHandler generatePath() {
+		if (this.camera_name == null) {
+			return this;
+		}
 		int max_points = (this.plugin.getConfigCameras().getDuration(this.camera_name) * 1000) / this.single_frame_duration_ms;
 
 		List<CameraStep> raw_camera_points = this.plugin.getConfigCameras().getPoints(this.camera_name);
@@ -122,12 +137,13 @@ public class CameraHandler extends BukkitRunnable {
 
 	public CameraHandler start() {
 		this.storePlayerState();
-		this.setCurrentState(GameMode.SPECTATOR, true);
+		this.setPlayerState(GameMode.SPECTATOR, true);
 
-		this.plugin.player_camera_mode.put(this.player.getUniqueId(), CAMERA_MODE.VIEW);
-		runTaskTimer(this.plugin, 1L, 1L);
+		this.mode = CameraMode.VIEW;
+		this.runningTask = new CameraTask(this);
+		this.runningTask.startRepeating(1L, 1L);
 		if (camera_path_points.size() > 0) {
-			player.teleport(camera_path_points.get(0));
+			this.player.teleport(camera_path_points.get(0));
 		}
 
 		if (!this.player.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES))
@@ -135,7 +151,7 @@ public class CameraHandler extends BukkitRunnable {
 		return this;
 	}
 
-	public void setCurrentState(GameMode mode, Boolean invis) {
+	public void setPlayerState(GameMode mode, Boolean invis) {
 		if (mode != null && this.plugin.getConfigPlugin().shouldUseSpectator()) {
 			player.setGameMode(mode);
 		}
@@ -146,7 +162,7 @@ public class CameraHandler extends BukkitRunnable {
 
 	public void restorePlayerState() {
 		player.teleport(previous_player_location);
-		this.setCurrentState(this.previous_gamemode, this.previous_invisible);
+		this.setPlayerState(this.previous_gamemode, this.previous_invisible);
 	}
 
 	public void storePlayerState() {
@@ -156,16 +172,10 @@ public class CameraHandler extends BukkitRunnable {
 	}
 
 	public CameraHandler stop() {
-		plugin.player_camera_mode.put(player.getUniqueId(), CAMERA_MODE.NONE);
-		try {
-			this.cancel();
-		} catch (Exception e) {
+		if (this.runningTask != null && !this.runningTask.isStopped()) {
+			this.runningTask.stop();
 		}
-
-		this.restorePlayerState();
-
-		if (!this.player.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES))
-			player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + camera_name + "' has ended!");
+		this.runningTask = null;
 		return this;
 	}
 
@@ -173,7 +183,7 @@ public class CameraHandler extends BukkitRunnable {
 		return new Vector(end.getX() - start.getX(), end.getY() - start.getY(), end.getZ() - start.getZ());
 	}
 
-	private void nextFrame() {
+	protected void nextFrame() {
 		Location current_pos = camera_path_points.get(this.ticks);
 		Location next_point = camera_path_points.get(this.ticks + 1);
 
@@ -189,24 +199,6 @@ public class CameraHandler extends BukkitRunnable {
 		player.setVelocity(calculateVelocity(current_pos, next_point));
 
 		this.ticks += 1;
-	}
-
-	@Override
-	public void run() {
-		if (plugin.player_camera_mode.get(player.getUniqueId()) == PowerCamera.CAMERA_MODE.VIEW) {
-			if (this.ticks > camera_path_points.size() - 2) {
-				this.stop();
-				return;
-			}
-			this.nextFrame();
-		} else {
-			if (plugin.player_camera_mode.get(player.getUniqueId()) == PowerCamera.CAMERA_MODE.NONE)
-				return;
-			this.restorePlayerState();
-			plugin.player_camera_mode.put(player.getUniqueId(), PowerCamera.CAMERA_MODE.NONE);
-			player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview ended!");
-		}
-
 	}
 
 	public CameraHandler preview(Player player, int num, int preview_time) {
@@ -233,11 +225,12 @@ public class CameraHandler extends BukkitRunnable {
 
 		previous_invisible = Util.isPlayerInvisible(player);
 
-		plugin.player_camera_mode.put(player.getUniqueId(), PowerCamera.CAMERA_MODE.PREVIEW);
-		this.setCurrentState(GameMode.SPECTATOR, true);
+		this.mode = CameraMode.PREVIEW;
+		this.setPlayerState(GameMode.SPECTATOR, true);
 		player.teleport(point);
 
-		runTaskLater(this.plugin, preview_time * 20L);  // drop out of preview preview_time seconds later.
+		this.runningTask = new CameraTask(this);
+		this.runningTask.startDelay(preview_time * 20L); // drop out of preview preview_time seconds later.
 		return this;
 	}
 

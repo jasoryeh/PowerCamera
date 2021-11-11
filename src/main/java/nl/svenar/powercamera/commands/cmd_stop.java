@@ -1,5 +1,7 @@
 package nl.svenar.powercamera.commands;
 
+import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraManager.CameraMode;
 import nl.svenar.powercamera.PowerCamera;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,8 +20,10 @@ public class cmd_stop extends PowerCameraCommand {
 			sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command");
 			return false;
 		}
-		if (this.plugin.player_camera_mode.get(((Player) sender.getSender()).getUniqueId()) != null && this.plugin.player_camera_mode.get(((Player) sender.getSender()).getUniqueId()) != PowerCamera.CAMERA_MODE.NONE && this.plugin.player_camera_handler.get(((Player) sender.getSender()).getUniqueId()) != null) {
-			this.plugin.player_camera_handler.get(((Player) sender.getSender()).getUniqueId()).stop();
+
+		CameraHandler cameraHandler = this.plugin.getCamera_manager().getCameraHandler(sender);
+		if (cameraHandler != null && cameraHandler.getMode() != CameraMode.NONE) {
+			cameraHandler.stop();
 			if (!sender.hasPermission(PowerCameraPermissions.HIDESTARTMESSAGES)) {
 				sender.sendMessage(ChatColor.GREEN + "Current camera stopped");
 			}

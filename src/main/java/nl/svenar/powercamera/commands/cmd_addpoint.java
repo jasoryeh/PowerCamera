@@ -18,8 +18,8 @@ public class cmd_addpoint extends PowerCameraCommand {
 			return false;
 		}
 		String easing = "linear";
+		String camera_name = this.plugin.getCamera_manager().getCameraHandler(sender).getCamera_name();
 		if (args.length == 0) {
-			String camera_name = plugin.player_selected_camera.get(((Player) sender.getSender()).getUniqueId());
 			if (camera_name == null) {
 				sender.sendMessage(ChatColor.RED + "No camera selected!");
 				sender.sendMessage(ChatColor.GREEN + "Select a camera by doing: /" + commandLabel + " select <name>");
@@ -29,7 +29,6 @@ public class cmd_addpoint extends PowerCameraCommand {
 			plugin.getConfigCameras().camera_addpoint(((Player) sender.getSender()).getLocation(), easing, camera_name);
 			sender.sendMessage(ChatColor.GREEN + "Point added to camera '" + camera_name + "'!");
 		} else if (args.length == 1) {
-			String camera_name = plugin.player_selected_camera.get(((Player) sender.getSender()).getUniqueId());
 			easing = args[0];
 			if (!easing.equalsIgnoreCase("linear") && !easing.equalsIgnoreCase("teleport")) {
 				sender.sendMessage(ChatColor.DARK_RED + "Usage: /" + commandLabel + " addpoint [linear/teleport]");
