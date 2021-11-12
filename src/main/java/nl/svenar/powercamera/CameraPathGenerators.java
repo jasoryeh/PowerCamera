@@ -21,6 +21,13 @@ public class CameraPathGenerators {
         .collect(Collectors.toList());
   }
 
+  private double normalizeYaw(double yaw) {
+    if (yaw > 180) {
+      return (yaw - 360);
+    }
+    return yaw;
+  }
+
   private Location translateLinear(Location point, Location point_next, int progress, int progress_max) {
     if (!point.getWorld().getUID().toString().equals(point_next.getWorld().getUID().toString())) {
       return point_next;
@@ -31,7 +38,12 @@ public class CameraPathGenerators {
     new_point.setX(calculateProgress(point.getX(), point_next.getX(), progress, progress_max));
     new_point.setY(calculateProgress(point.getY(), point_next.getY(), progress, progress_max));
     new_point.setZ(calculateProgress(point.getZ(), point_next.getZ(), progress, progress_max));
-    new_point.setYaw((float) calculateProgress(point.getYaw(), point_next.getYaw(), progress, progress_max));
+
+    if (Math.abs(point.getYaw() - point_next.getYaw()) > 180) {
+      new_point.setYaw((float) calculateProgress(normalizeYaw(point.getYaw()), normalizeYaw(point_next.getYaw()), progress, progress_max));
+    } else {
+      new_point.setYaw((float) calculateProgress(point.getYaw(), point_next.getYaw(), progress, progress_max));
+    }
     new_point.setPitch((float) calculateProgress(point.getPitch(), point_next.getPitch(), progress, progress_max));
 
     return new_point;
